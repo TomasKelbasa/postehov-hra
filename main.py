@@ -4,46 +4,58 @@ Player1 = False
 Player2time = 0
 pins.touch_set_mode(TouchTarget.P1, TouchTargetMode.CAPACITIVE)
 pins.touch_set_mode(TouchTarget.P2, TouchTargetMode.CAPACITIVE)
-nezmacknuto = True
-delka = randint(1, 5)*1000
+zmacknuto = False
+delka = randint(3, 10)*1000
 hrathudbu = False
 ukazano = False
 
 def on_forever():
     console.log_value("x", delka)
-    global Player1, Player1time, nezmacknuto, Player2, Player2time, hrathudbu, ukazano
+    global Player1, Player1time, zmacknuto, Player2, Player2time, hrathudbu, ukazano
     pin1pressed = input.pin_is_pressed(TouchPin.P1)
     pin2pressed = input.pin_is_pressed(TouchPin.P2)
     console.log_value("pin1", pin1pressed)
     if pin1pressed:
-        if nezmacknuto:
+        if not zmacknuto:
             Player1 = True
             Player1time = control.millis()
-            #basic.show_number(1)
-            nezmacknuto = False
     if pin2pressed:
-        if nezmacknuto:
+        if not zmacknuto:
             Player2 = True
             Player2time = control.millis()
-            #basic.show_number(2)
-            nezmacknuto = False
+    if (Player1 or Player2):
+        if (control.millis() >= delka):
+            zmacknuto = True
     if control.millis() >= delka:
-        if(nezmacknuto and not ukazano):
-            basic.show_icon(IconNames.Diamond)
+        if(not zmacknuto and not ukazano):
+            control.in_background(onIn_background)
+            hrathudbu = True
             ukazano = False
-        #hrathudbu = True
-        if(not nezmacknuto):
-            basic.show_leds("""
-            . . . . .
-            . . . . .
-            . . # . .
-            . . . . .
-            . . . . .
-            """)
+            basic.show_icon(IconNames.Diamond)
+        if(zmacknuto):
+            control.in_background(void_background)
+            hrathudbu = False
+            if(Player1 and Player2):
+                if (Player1time <= delka and Player2time <= delka):
+                    basic.show_string("C")
+                else:
+                    basic.show_string("R")
+            elif(Player1):
+                if(Player1time < delka):
+                    basic.show_string("B")
+                else:
+                    basic.show_number(1)
+            else:
+                if(Player2time < delka):
+                    basic.show_string("A")
+                else:
+                    basic.show_number(2)
+            basic.pause(1000)
+            control.reset()
 basic.forever(on_forever)
-#control.in_background(onIn_background)
 
 def onIn_background():
-    global hrathudbu
-    if(hrathudbu):
-        basic.show_number(9)
+    if hrathudbu:
+        music.play_tone(Note.E, music.beat(12))
+def void_background():
+    pass
