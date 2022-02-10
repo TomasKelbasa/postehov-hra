@@ -8,6 +8,7 @@ let zmacknuto = false
 let delka = randint(3, 10) * 1000
 let hrathudbu = false
 let ukazano = false
+control.inBackground(onIn_background)
 basic.forever(function on_forever() {
     console.logValue("x", delka)
     
@@ -39,21 +40,13 @@ basic.forever(function on_forever() {
     
     if (control.millis() >= delka) {
         if (!zmacknuto && !ukazano) {
-            control.inBackground(function onIn_background() {
-                if (hrathudbu) {
-                    music.playTone(Note.E, music.beat(12))
-                }
-                
-            })
             hrathudbu = true
+            control.inBackground(onIn_background)
             ukazano = false
-            basic.showIcon(IconNames.Diamond)
+            basic.showIcon(IconNames.Diamond, 0)
         }
         
         if (zmacknuto) {
-            control.inBackground(function void_background() {
-                
-            })
             hrathudbu = false
             if (Player1 && Player2) {
                 if (Player1time <= delka && Player2time <= delka) {
@@ -82,3 +75,12 @@ basic.forever(function on_forever() {
     }
     
 })
+function onIn_background() {
+    let hrathudbu: boolean;
+    if (hrathudbu) {
+        music.playTone(Note.E, music.beat(12))
+        hrathudbu = false
+    }
+    
+}
+

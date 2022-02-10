@@ -8,6 +8,7 @@ zmacknuto = False
 delka = randint(3, 10)*1000
 hrathudbu = False
 ukazano = False
+control.in_background(onIn_background)
 
 def on_forever():
     console.log_value("x", delka)
@@ -28,12 +29,11 @@ def on_forever():
             zmacknuto = True
     if control.millis() >= delka:
         if(not zmacknuto and not ukazano):
-            control.in_background(onIn_background)
             hrathudbu = True
+            control.in_background(onIn_background)
             ukazano = False
-            basic.show_icon(IconNames.Diamond)
+            basic.show_icon(IconNames.Diamond, 0)
         if(zmacknuto):
-            control.in_background(void_background)
             hrathudbu = False
             if(Player1 and Player2):
                 if (Player1time <= delka and Player2time <= delka):
@@ -57,5 +57,4 @@ basic.forever(on_forever)
 def onIn_background():
     if hrathudbu:
         music.play_tone(Note.E, music.beat(12))
-def void_background():
-    pass
+        hrathudbu = False
