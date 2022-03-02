@@ -1,20 +1,20 @@
-let Player2 = false
-let Player1time = 0
-let Player1 = false
-let Player2time = 0
-pins.touchSetMode(TouchTarget.P1, TouchTargetMode.Capacitive)
-pins.touchSetMode(TouchTarget.P2, TouchTargetMode.Capacitive)
-let zmacknuto = false
-let delka = randint(3, 10) * 1000
-let hrathudbu = false
-let ukazano = false
-control.inBackground(onIn_background)
-basic.forever(function on_forever() {
-    console.logValue("x", delka)
+control.inBackground(function onIn_background() {
+    let hrathudbu: boolean;
+    if (hrathudbu) {
+        music.playTone(Note.E, music.beat(12))
+        hrathudbu = false
+    }
     
+})
+let [Player1, Player1time, zmacknuto, Player2, Player2time, hrathudbu, delka] = [false, 0, false, false, 0, false, 0]
+restartovani()
+basic.forever(function on_forever() {
+    
+    console.logValue("x", delka)
     let pin1pressed = input.pinIsPressed(TouchPin.P1)
     let pin2pressed = input.pinIsPressed(TouchPin.P2)
     console.logValue("pin1", pin1pressed)
+    // console.log_value("ukazano", ukazano)
     if (pin1pressed) {
         if (!zmacknuto) {
             Player1 = true
@@ -39,10 +39,8 @@ basic.forever(function on_forever() {
     }
     
     if (control.millis() >= delka) {
-        if (!zmacknuto && !ukazano) {
+        if (!zmacknuto) {
             hrathudbu = true
-            control.inBackground(onIn_background)
-            ukazano = false
             basic.showIcon(IconNames.Diamond, 0)
         }
         
@@ -68,19 +66,23 @@ basic.forever(function on_forever() {
                 basic.showNumber(2)
             }
             
-            basic.pause(1000)
-            control.reset()
+            restartovani()
         }
         
     }
     
 })
-function onIn_background() {
-    let hrathudbu: boolean;
-    if (hrathudbu) {
-        music.playTone(Note.E, music.beat(12))
-        hrathudbu = false
-    }
+function restartovani() {
     
+    basic.clearScreen()
+    Player2 = false
+    Player1time = 0
+    Player1 = false
+    Player2time = 0
+    pins.touchSetMode(TouchTarget.P1, TouchTargetMode.Capacitive)
+    pins.touchSetMode(TouchTarget.P2, TouchTargetMode.Capacitive)
+    zmacknuto = false
+    delka = randint(3, 10) * 1000 + control.millis()
+    hrathudbu = false
 }
 
